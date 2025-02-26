@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 
-import { NgIf, NgFor, NgClass } from '@angular/common';
+import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { Product } from '../product';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
 import { ProductService } from '../product.service';
@@ -10,36 +10,48 @@ import { catchError, EMPTY, Subscription, tap } from 'rxjs';
     selector: 'pm-product-list',
     templateUrl: './product-list.component.html',
     standalone: true,
-  imports: [NgIf, NgFor, NgClass, ProductDetailComponent]
+  imports: [NgIf, NgFor, NgClass, ProductDetailComponent, AsyncPipe]
 })
-export class ProductListComponent implements OnInit, OnDestroy {
+export class ProductListComponent  {
   
   pageTitle = 'Products';
   errorMessage = '';
   private subService!: Subscription;
   private productService= inject(ProductService);
   // Products
-  products: Product[] = [];
-
-  ngOnInit(): void {
-   this.subService= this.productService.getProducts()
-   .pipe(
-    tap(()=>console.log("In component pipeline")),
-    catchError(err=>{
-      this.errorMessage= err;
-      return EMPTY;
-    })
-   )
-   .subscribe(resp=>{
-    this.products=resp;
-    console.log(this.products);
-   });
-   
-  }
+ // products: Product[] = [];
+  readonly products$ = this.productService.product$
+  .pipe(
+   tap(()=>console.log("In component pipeline")),
+   catchError(err=>{
+     this.errorMessage= err;
+     return EMPTY;
+   })
+  );
   
-  ngOnDestroy(): void {
-    this.subService.unsubscribe();
-  }
+// ---For declarative approach we don't need ngOnInit, OnDestroy
+
+  // ngOnInit(): void {
+
+    
+  //  this.subService= this.productService.getProducts()
+  //  .pipe(
+  //   tap(()=>console.log("In component pipeline")),
+  //   catchError(err=>{
+  //     this.errorMessage= err;
+  //     return EMPTY;
+  //   })
+  //  )
+  //  .subscribe(resp=>{
+  //   this.products=resp;
+  //   console.log(this.products);
+  //  });
+   
+  //}
+  
+  // ngOnDestroy(): void {
+  //   this.subService.unsubscribe();
+  // }
 
 
 

@@ -10,6 +10,7 @@ import { CartItem } from '../cart';
   imports: [CurrencyPipe, FormsModule, NgFor, NgIf],
   templateUrl: './cart-item.component.html'
 })
+
 export class CartItemComponent {
 
   @Input({ required: true }) cartItem!: CartItem;
