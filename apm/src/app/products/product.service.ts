@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { Product } from './product';
 import { HttpErrorService } from '../utilities/http-error.service';
 import { ProductData } from './product-data';
@@ -22,6 +22,8 @@ export class ProductService {
   readonly product$= this.http.get<Product[]>(this.productsUrl)
   .pipe(
     tap(()=>console.log("In http getProducts pipeline")),
+    shareReplay(1),
+    tap(()=>console.log("After share replay")),
      catchError((err)=> this.HandleError(err))
   );
 
