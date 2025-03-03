@@ -58,9 +58,13 @@ export class ProductListComponent  {
 
 
   // Selected product id to highlight the entry
-  selectedProductId: number = 0;
+
+  // good practice to bind component variable to template 
+  // and so load data from service variable to component variable
+  // make it readonly so that prevents accedental override
+readonly selectedProductId$= this.productService.productSelected$;
 
   onSelected(productId: number): void {
-    this.selectedProductId = productId;
+    this.productService.productSelected(productId);
   }
 }
